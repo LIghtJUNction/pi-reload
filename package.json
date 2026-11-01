@@ -1,0 +1,28 @@
+{
+  "name": "pi-agent-reload",
+  "version": "0.1.0",
+  "description": "Let a Pi agent request a runtime reload through a single tool.",
+  "type": "module",
+  "keywords": [
+    "pi-package"
+  ],
+  "files": [
+    "extensions",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "pi": {
+    "extensions": [
+      "./extensions/reload.ts"
+    ]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "typebox": "*"
+  },
+  "devDependencies": {
+    "typebox": "^1.0.0"
+  }
+}
