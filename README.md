@@ -1,6 +1,8 @@
 <div align="center">
 
-# ↻ Pi Reload
+<img src="https://raw.githubusercontent.com/LIghtJUNction/pi-reload/main/assets/logo.svg" alt="Pi Reload logo" width="128" height="128">
+
+# Pi Reload
 
 **让 agent 自己重载 Pi。一个工具，没有多余功能。**
 
