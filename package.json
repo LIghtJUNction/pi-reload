@@ -1,6 +1,6 @@
 {
   "name": "pi-agent-reload",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Let a Pi agent request a runtime reload through a single tool.",
   "type": "module",
   "license": "MIT",
