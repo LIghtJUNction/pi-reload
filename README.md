@@ -61,14 +61,16 @@ pi -e ./extensions/reload.ts
 
 ## 工作原理
 
-遵循 Pi 1.4.0 官方的
-[`reload-runtime.ts` 示例](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/examples/extensions/reload-runtime.ts)：
+使用 Pi 1.4.0 的空闲事件和扩展命令 API：
 
 ```text
 agent 调用 reload_runtime
           │
           ▼
-排队 follow-up 命令 /agent-reload-runtime
+记录请求，等待 agent_settled
+          │
+          ▼
+显式解析扩展命令 /agent-reload-runtime
           │
           ▼
 Pi 处理命令 → await ctx.reload()
@@ -79,8 +81,10 @@ Pi 处理命令 → await ctx.reload()
 
 工具上下文没有命令专用的 `ctx.reload()`，因此插件使用一个内部命令桥接，不模拟键盘、不操作终端。
 
+必须等到 `agent_settled` 再发送命令，并指定 `expandPromptTemplates: true`：默认发送行为会把 `/命令` 当作普通模型消息，执行中直接解析命令则会被 Pi 的忙碌检查拒绝。Pi 会将空闲事件内发送的命令延后到事件处理结束再执行。多次请求合并为一次；中止当前运行会取消待处理重载。
+
 > **已排队 ≠ 已完成。**
-> 工具返回只确认重载请求已排队，以 Pi 实际重载结果为准。它不是同步重载屏障，不能保证同一批后续工具已经使用新运行时。需要使用新加载的工具时，建议等重载完成后再发一条消息。
+> 工具返回只确认重载请求已记录，以 Pi 实际重载结果为准。agent 必须结束回复，让运行进入空闲状态；继续调用工具不会触发这次重载。需要使用新加载的工具时，等重载完成后再发一条消息。
 
 ## 开发与发布
 
@@ -94,7 +98,7 @@ npm test
 npm pack --dry-run
 ```
 
-5 项单元测试覆盖注册、命令排队、等待重载及错误传播。它们模拟 Pi API，不替代真实会话中的交互重载验证。
+8 项单元测试覆盖注册、延迟调度、显式命令解析、请求合并、中止取消、等待重载及错误传播。它们模拟 Pi API，不替代真实会话中的交互重载验证。
 
 ### 自动发布
 
