@@ -7,6 +7,16 @@
 - **首次发布或兼容方式**：在仓库 Settings → Secrets and variables → Actions 中添加 `NPM_TOKEN`。使用有此包发布权限、有效且符合账号双重验证要求的 npm granular access token。不要提交 token，也不要在聊天中粘贴。
 - **后续推荐方式**：包首次发布成功后，在 npm 包设置中配置 Trusted Publisher：GitHub owner 为 `LIghtJUNction`，repository 为 `pi-reload`，workflow filename 为 `release.yml`，不填写 environment。配置完成后可移除仓库 `NPM_TOKEN`，由 GitHub OIDC 短期身份发布。
 
+使用支持 `npm trust` 的 npm 12，可在本机终端完成首次发布和授权：
+
+```sh
+cd /home/lightjunction/Documents/GITHUB/pi-reload
+npm publish --access public
+npm trust github pi-agent-reload --file release.yml --repo LIghtJUNction/pi-reload --allow-publish --yes
+```
+
+按终端提示在浏览器完成 npm 双重验证。`npm whoami` 成功不代表已经满足发布和权限变更的额外验证要求；遇到 `EOTP` 时需要完成该验证，不要反复盲目重试。
+
 Trusted Publisher 需要先存在 npm 包；不能用尚未创建的包完成首次授权。包名是否可用及首次发布权限最终以 npm 注册表响应为准。
 
 工作流使用 Node.js 24 和 npm 11.5.1+，授予 `id-token: write`，并通过 `--provenance` 附带构建来源证明。仓库为公开仓库，包也以公开方式发布。
